@@ -9,5 +9,15 @@
   </header>
   <body>
     <a href='/'>Home</a> | <a href='/products'>Products</a> |
-    <a href='/branches'>Branches</a> | <a href='/aboutus'>About Us</a>
+    <a href='/branches'>Branches</a> | <a href='/aboutus'>About Us</a> |
+    {% if session["user"] is defined %}
+       Welcome, {{ session["user"]["first_name"] }}.
+       <a href='/cart'>View Cart</a> |
+        <a href='/logout'>Logout</a>
+       {% else %}
+       <a href='/login'>Login</a>
+       {% endif %}
+       <p/>
+
+
     <p/>
