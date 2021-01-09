@@ -6,6 +6,9 @@ from flask import flash
 import database as db
 import authentication
 import logging
+import ordermanagement as om
+import datetime
+
 
 
 app = Flask(__name__)
@@ -42,7 +45,7 @@ def branches():
 @app.route('/branchdetails')
 def branchdetails():
     code = request.args.get('code', '')
-    branch = db.get_branch(int(code))
+    branch = db.get_product(int(code))
     return render_template('branchdetails.html', code=code, branch=branch)
 
 @app.route('/aboutus')
@@ -103,15 +106,17 @@ def cart():
 
 @app.route('/formsubmission', methods = ['POST'])
 def form_submission():
+
     code = request.form.getlist("code")
     qty = request.form.getlist("qty")
-    cart = session["cart"]
 
+    cart = session["cart"]
 
     for i in range(len(code)):
         product = db.get_product(int(code[i]))
         cart[code[i]]["qty"] = int(qty[i])
         cart[code[i]]["subtotal"] = int(qty[i]) * product["price"]
+
     session["cart"]=cart
 
     return redirect('/cart')
@@ -124,3 +129,48 @@ def delete_item():
     session["cart"]=cart
 
     return redirect('/cart')
+
+@app.route('/checkout')
+def checkout():
+    # clear cart in session memory upon checkout
+    # check if the user has previously checkedout
+    om.create_order_from_cart()
+    session.pop("cart",None)
+    return redirect('/ordercomplete')
+
+@app.route('/ordercomplete')
+def ordercomplete():
+    return render_template('ordercomplete.html')
+
+@app.route('/pastorders')
+def pastorders():
+    orders = db.get_orders()
+    order_list = []
+    for item in orders:
+        for order in item['details']:
+            order_list.append(order)
+
+    return render_template('pastorders.html', page="Past Orders", orders = order_list)
+
+@app.route('/changepassword')
+def changepassrender():
+    return render_template('changepass.html')
+
+@app.route('/changepass', methods = ['POST'])
+def changepasspost():
+    oldpassword = request.form.get('oldpass')
+    newpassword = request.form.get('newpass')
+    confirmpassword = request.form.get('confirmpass')
+
+    is_successful, is_correct_oldpass, is_same_newpasses = authentication.change_password_verification(oldpassword, newpassword, confirmpassword)
+    app.logger.info('%s', is_successful)
+    if(is_successful):
+        db.change_pass(session['user']['username'], newpassword)
+        return redirect('/changepassword')
+    else:
+        if not is_correct_oldpass:
+            flash("Old password is not correct.")
+        if not is_same_newpasses:
+            flash("Passwords do not match.")
+
+        return redirect('/changepassword')

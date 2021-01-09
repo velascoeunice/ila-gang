@@ -6,12 +6,13 @@
             <table>
             <tr><th>Name</th><th>Quantity</th><th>Subtotal</th></tr>
             {% for item in session["cart"].values() %}
-                        <tr><td>{{ item["name"] }}</td><td><input type="hidden" name="code" value="{{ item["code"]}}"><input type="text" name="qty" value="{{ item["qty"] }}"/></td><td>{{ item["subtotal"] }}</td><td><a href="/deleteitem?code={{ item["code"] }}">delete item</a></td></tr>
+                        <tr><td>{{ item["name"] }}</td><td><input type="hidden" name="name" value="{{ item["name"]}}"><input type="hidden" name="code" value="{{ item["code"]}}"><input type="hidden" name="subtotal" value="{{ item["subtotal"] }}"><input type="text" name="qty" value="{{ item["qty"] }}"/></td><td>{{ item["subtotal"] }}</td><td><a href="/deleteitem?code={{ item["code"] }}">delete item</a></td></tr>
             {% endfor %}
             <tr><td colspan=2><b>Total</b></td><td><b>{{ session["cart"].values()|sum(attribute="subtotal") }}</b></td></tr>
             </table>
-            <tr><td><input type="submit" value="Update">
+            <tr><td><input type="submit" value="Update"></td></tr>
             </form>
+            <a href='checkout'>checkout</a>
             {% else %}
             <div>Your cart is empty</div>
             {% endif %}

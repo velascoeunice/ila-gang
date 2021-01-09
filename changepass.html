@@ -1,0 +1,36 @@
+{% include "header.html" %}
+
+<div class= "container align-items-center justify-content-center">
+<h1>Change Password</h1>
+<form action="/changepass" method="POST">
+   <div>
+     Old Password
+   </div>
+   <input type="password" name="oldpass"></input>
+   <div>
+     New Password
+   </div>
+   <input type="password" name="newpass"></input>
+   <div>
+   <div>
+      Confirm Password
+   </div>
+   <input type="password" name="confirmpass"></input>
+   <div>
+   <input type="submit" value="Change"/>
+   </div>
+</form>
+</div>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+      <div>
+        {{message}}
+      </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+
+{% include "footer.html" %}
