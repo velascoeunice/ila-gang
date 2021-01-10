@@ -32,7 +32,7 @@ def get_branch(code):
 
     branches = products_coll.find_one({"code":code})
 
-    return branches[code]
+    return branches
 
 def get_branches():
     branches_list = []
