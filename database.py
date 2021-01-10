@@ -11,7 +11,7 @@ order_management_db = myclient["order_management"]
 def get_product(code):
     products_coll = products_db["products"]
 
-    product = products_coll.find_one({"code":code})
+    product = products_coll.find_one({"code":code}, {"_id":0})
 
     return product
 
@@ -21,7 +21,7 @@ def get_products():
 
     products_coll = products_db["products"]
 
-    for p in products_coll.find({}):
+    for p in products_coll.find({}, {"_id":0}):
         product_list.append(p)
 
     return product_list

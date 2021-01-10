@@ -2,6 +2,8 @@ from flask import Flask,redirect
 from flask import render_template
 from flask import request
 from flask import session
+from bson.json_util import loads, dumps
+from flask import make_response
 from flask import flash
 import database as db
 import authentication
@@ -174,3 +176,15 @@ def changepasspost():
             flash("Passwords do not match.")
 
         return redirect('/changepassword')
+
+@app.route('/api/products',methods=['GET'])
+def api_get_products():
+    resp = make_response( dumps(db.get_products()) )
+    resp.mimetype = 'application/json'
+    return resp
+
+@app.route('/api/products/<int:code>',methods=['GET'])
+def api_get_product(code):
+    resp = make_response(dumps(db.get_product(code)))
+    resp.mimetype = 'application/json'
+    return resp
